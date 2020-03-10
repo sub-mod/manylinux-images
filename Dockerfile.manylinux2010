@@ -35,7 +35,7 @@ RUN echo "unset BASH_ENV PROMPT_COMMAND ENV" > /usr/bin/scl_enable \
     && echo "source scl_source enable rh-python36 devtoolset-7" >> /usr/bin/scl_enable \
     && echo "JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk-1.8.0*'" >> /usr/bin/scl_enable \
     && echo "FULL_JAVA_HOME=$(readlink -f $JAVA_HOME)" >> /usr/bin/scl_enable \
-    && echo "export JAVA_HOME=$FULL_JAVA_HOME" >> /usr/bin/scl_enable
+    && echo "export JAVA_HOME=\$FULL_JAVA_HOME" >> /usr/bin/scl_enable
 RUN chmod a+x /usr/bin/scl_enable
 
 # Switch to the user 

@@ -1,0 +1,27 @@
+FROM docker.io/centos:7
+
+LABEL maintainer="Subin Modeel <smodeel@redhat.com>"
+USER root
+
+ENV JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0*" \
+    PLATFORM="el7"
+
+RUN yum -y install centos-release-scl \
+    && yum -y install devtoolset-7 rh-python36 \
+    && yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel 
+
+# compile src with gcc-7 and py3.6
+RUN source scl_source enable devtoolset-7 rh-python36 \
+    && gcc --version \
+    && python -V
+
+# start the container with gcc-7 and py3.6 for post-startup scripts
+RUN echo "#!/bin/bash" > /usr/bin/scl_enable \
+    && echo "source scl_source enable rh-python36 devtoolset-7" >> /usr/bin/scl_enable \
+    && echo "JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk-1.8.0*'" >> /usr/bin/scl_enable \
+    && echo "FULL_JAVA_HOME=$(readlink -f $JAVA_HOME)" >> /usr/bin/scl_enable \
+    && echo "export JAVA_HOME=\$FULL_JAVA_HOME" >> /usr/bin/scl_enable \
+    && echo "exec \"\$@\"" >> /usr/bin/scl_enable
+RUN chmod a+x /usr/bin/scl_enable
+RUN cat /usr/bin/scl_enable
+ENTRYPOINT [ "/usr/bin/scl_enable" ]
