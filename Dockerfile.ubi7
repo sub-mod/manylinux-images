@@ -10,22 +10,22 @@ ENV BASH_ENV="/usr/bin/scl_enable" \
     ENV="/usr/bin/scl_enable" \
     PROMPT_COMMAND=". /usr/bin/scl_enable"
 
-RUN yum-config-manager --enable rhel-server-rhscl-7-rpms \
+RUN yum-config-manager --enable rhel-server-rhscl-7-rpms rhel-7-server-devtools-rpms \
     && yum install -y unzip vim wget git-lfs cmake3 doxygen ccache sudo gdb \
     && yum install -y curl-devel gettext-devel openssl-devel zlib-devel \
-    && yum install -y autoconf tcl \
+    && yum install -y autoconf tcl llvm-toolset-8.0-cmake \
     && yum install -y devtoolset-7 rh-python36 \
     && yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel
 
-RUN source scl_source enable devtoolset-7 rh-python36 \
+RUN source scl_source enable devtoolset-7 rh-python36 llvm-toolset-8.0 \
     && gcc --version \
     && python -V \
-    && wget -q https://github.com/Kitware/CMake/releases/download/v3.16.5/cmake-3.16.5.tar.gz \
-    && tar -xvf cmake-3.16.5.tar.gz \
-    && cd cmake-3.16.5 \
-    && ./bootstrap --prefix=/usr/local \
-    && make \
-    && make install \
+#    && wget -q https://github.com/Kitware/CMake/releases/download/v3.16.5/cmake-3.16.5.tar.gz \
+#    && tar -xvf cmake-3.16.5.tar.gz \
+#    && cd cmake-3.16.5 \
+#    && ./bootstrap --prefix=/usr/local \
+#    && make \
+#    && make install \
     && cmake --version \
     && wget https://github.com/git/git/archive/v2.25.1.tar.gz -O git.tar.gz \
     && tar -zxf git.tar.gz \
@@ -47,7 +47,7 @@ RUN source scl_source enable devtoolset-7 rh-python36 \
 
 # start the container with gcc-7 and py3.6
 RUN echo "unset BASH_ENV PROMPT_COMMAND ENV" > /usr/bin/scl_enable \
-    && echo "source scl_source enable rh-python36 devtoolset-7" >> /usr/bin/scl_enable \
+    && echo "source scl_source enable rh-python36 devtoolset-7 llvm-toolset-8.0" >> /usr/bin/scl_enable \
     && echo "JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk-1.8.0*'" >> /usr/bin/scl_enable \
     && echo "FULL_JAVA_HOME=$(readlink -f $JAVA_HOME)" >> /usr/bin/scl_enable \
     && echo "export JAVA_HOME=\$FULL_JAVA_HOME" >> /usr/bin/scl_enable
