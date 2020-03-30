@@ -11,7 +11,7 @@ ENV BASH_ENV="/usr/bin/scl_enable" \
     PROMPT_COMMAND=". /usr/bin/scl_enable"
 
 RUN yum -y module enable llvm-toolset python36 javapackages-runtime \
-    && yum install -y unzip vim wget git cmake3 sudo gdb \
+    && yum install -y unzip vim wget git cmake3 sudo gdb gcc-c++ make \
    # && yum install -y unzip vim wget git-lfs cmake3 doxygen ccache sudo gdb \
     && yum install -y curl-devel gettext-devel openssl-devel zlib-devel \
     && yum install -y autoconf tcl python3 python3-devel python3-pip which \

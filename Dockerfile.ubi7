@@ -14,7 +14,7 @@ RUN yum-config-manager --enable rhel-server-rhscl-7-rpms rhel-7-server-devtools-
     && yum install -y unzip vim wget git-lfs cmake3 doxygen ccache sudo gdb \
     && yum install -y curl-devel gettext-devel openssl-devel zlib-devel \
     && yum install -y autoconf tcl llvm-toolset-8.0-cmake \
-    && yum install -y devtoolset-7 rh-python36 \
+    && yum install -y devtoolset-7 rh-python36 glibc-debuginfo rh-python36-python-debuginfo \
     && yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel
 
 RUN source scl_source enable devtoolset-7 rh-python36 llvm-toolset-8.0 \
@@ -44,6 +44,10 @@ RUN source scl_source enable devtoolset-7 rh-python36 \
     && pip install --upgrade pip \
     && pip3 install scipy jupyter matplotlib Pillow scikit-learn protobuf termcolor grpcio \
     && pip3 install mock gast backports.weakref astor absl-py futures pytest pytest-xdist Keras-Applications==1.0.8 Keras-Preprocessing==1.1.0 wheel
+
+RUN source scl_source enable devtoolset-7 rh-python36 \
+    && debuginfo-install rh-python36-python-3.6.9-2.el7.x86_64 -y \
+    && debuginfo-install bzip2-libs-1.0.6-13.el7.x86_64 expat-2.1.0-10.el7_3.x86_64 keyutils-libs-1.5.8-3.el7.x86_64 krb5-libs-1.15.1-37.el7_7.2.x86_64 libcom_err-1.42.9-16.el7.x86_64 libffi-3.0.13-18.el7.x86_64 libgcc-4.8.5-39.el7.x86_64 libselinux-2.5-14.1.el7.x86_64 libstdc++-4.8.5-39.el7.x86_64 libuuid-2.23.2-61.el7_7.1.x86_64 openssl-libs-1.0.2k-19.el7.x86_64 pcre-8.32-17.el7.x86_64 xz-libs-5.2.2-1.el7.x86_64 zlib-1.2.7-18.el7.x86_64 -y
 
 # start the container with gcc-7 and py3.6
 RUN echo "unset BASH_ENV PROMPT_COMMAND ENV" > /usr/bin/scl_enable \
