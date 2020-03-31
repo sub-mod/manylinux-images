@@ -1,0 +1,33 @@
+FROM quay.io/sub_mod/ibm:ubi7_minimal
+
+ADD ../IBM/tfbench/tf_cnn_benchmarks_v1.13 /opt/app-root/src/tf_cnn_benchmarks_v1.13
+ADD ../IBM/manylinux/2014/tensorflow-2.0.0-cp36-cp36m-linux_x86_64.whl /opt/app-root/src/
+ADD ../IBM/manylinux/2014/install /opt/app-root/src/sentient/
+ADD ../IBM/tfbench/validation_images_30_subset /opt/app-root/src/validation_images_30_subset
+ADD ../IBM/tfbench/tf_cnn_benchmarks_v1.12/CHECKPOINTS /opt/app-root/src/tf_cnn_benchmarks_v1.12/CHECKPOINTS
+
+ENV SENCORES=1
+ENV SENCORELETS=2
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/app-root/src/sentient/lib
+ENV PATH=$PATH:/opt/app-root/src/sentient/bin
+
+RUN source scl_source enable devtoolset-7 \
+    && echo $PWD \
+    && gcc --version \
+    && python -V \
+    && pip -V \
+    && pip install --upgrade pip \
+    && python -m pip install scipy jupyter matplotlib Pillow scikit-learn protobuf termcolor grpcio \
+    && python -m pip install mock gast backports.weakref astor absl-py futures pytest pytest-xdist Keras-Applications==1.0.8 Keras-Preprocessing==1.1.0 wheel \
+    && python -m pip install ./tensorflow-2.0.0-cp36-cp36m-linux_x86_64.whl \
+    && python -m pip install tensorflow-estimator==1.15.0
+
+ADD ./run_benchmark.sh /opt/app-root/src
+
+RUN chown -R 1001:0 ${APP_ROOT} && \
+    fix-permissions ${APP_ROOT} -P
+
+USER 1001
+
+# Set the default CMD to print the usage of the language image.
+CMD $STI_SCRIPTS_PATH/usage

@@ -1,0 +1,45 @@
+FROM registry.access.redhat.com/ubi7/ubi:latest
+
+LABEL maintainer="Subin Modeel <smodeel@redhat.com>"
+USER root
+
+ENV JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0*" \
+    PLATFORM="el7" \
+    PATH=/root/bin:$PATH
+ENV BASH_ENV="/usr/bin/scl_enable" \
+    ENV="/usr/bin/scl_enable" \
+    PROMPT_COMMAND=". /usr/bin/scl_enable"
+
+RUN yum-config-manager --enable rhel-server-rhscl-7-rpms \
+    && yum install -y unzip vim wget git-lfs cmake3 doxygen ccache sudo gdb \
+    && yum install -y devtoolset-7 rh-python36 \
+    && yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel
+
+RUN wget -q https://github.com/Kitware/CMake/releases/download/v3.16.5/cmake-3.16.5.zip \
+    && unzip cmake-3.16.5.zip \
+    && cd cmake-3.16.5 \
+    && ./bootstrap --prefix=/usr/local
+    && make \
+    && make install
+
+RUN source scl_source enable devtoolset-7 rh-python36 \
+    && gcc --version \
+    && python -V \
+    && cmake3 --version \
+    && wget -c https://github.com/bazelbuild/bazel/releases/download/0.24.1/bazel-0.24.1-installer-linux-x86_64.sh \
+    && chmod a+x bazel-0.24.1-installer-linux-x86_64.sh \
+    && ./bazel-0.24.1-installer-linux-x86_64.sh --user \
+    && pip install --upgrade pip \
+    && pip3 install scipy jupyter matplotlib Pillow scikit-learn protobuf termcolor grpcio \
+    && pip3 install mock gast backports.weakref astor absl-py futures pytest pytest-xdist Keras-Applications==1.0.8 Keras-Preprocessing==1.1.0 wheel
+
+# start the container with gcc-7 and py3.6
+RUN echo "unset BASH_ENV PROMPT_COMMAND ENV" > /usr/bin/scl_enable \
+    && echo "source scl_source enable rh-python36 devtoolset-7" >> /usr/bin/scl_enable \
+    && echo "JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk-1.8.0*'" >> /usr/bin/scl_enable \
+    && echo "FULL_JAVA_HOME=$(readlink -f $JAVA_HOME)" >> /usr/bin/scl_enable \
+    && echo "export JAVA_HOME=\$FULL_JAVA_HOME" >> /usr/bin/scl_enable
+RUN chmod a+x /usr/bin/scl_enable
+
+# Switch to the user 
+USER 1001

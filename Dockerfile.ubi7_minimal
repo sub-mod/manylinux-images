@@ -1,0 +1,22 @@
+FROM registry.access.redhat.com/ubi7/python-36
+#FROM registry.access.redhat.com/ubi7/ubi:latest
+
+LABEL maintainer="Subin Modeel <smodeel@redhat.com>"
+USER root
+
+ENV JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0*" \
+    PLATFORM="el7" \
+    PATH=/root/bin:$PATH
+
+RUN yum-config-manager --enable rhel-server-rhscl-7-rpms rhel-7-server-devtools-rpms \
+    && yum install -y unzip vim wget git git-lfs sudo \
+    && yum install -y devtoolset-7 
+
+# start the container with gcc-7 and py3.6
+# Look at https://github.com/sclorg/s2i-python-container/blob/master/3.6/Dockerfile.rhel7
+RUN sed -i 's/rh-python36/rh-python36 devtoolset-7/g' /opt/app-root/etc/scl_enable
+
+USER 1001
+
+# Set the default CMD to print the usage of the language image.
+CMD $STI_SCRIPTS_PATH/usage
