@@ -21,6 +21,7 @@ RUN source scl_source enable devtoolset-7 rh-python36 \
     && wget -c https://github.com/bazelbuild/bazel/releases/download/0.24.1/bazel-0.24.1-installer-linux-x86_64.sh \
     && chmod a+x bazel-0.24.1-installer-linux-x86_64.sh \
     && ./bazel-0.24.1-installer-linux-x86_64.sh --user \
+    && rm -fr bazel-0.24.1-installer-linux-x86_64.sh \
     && pip install --upgrade pip \
     && pip3 install scipy jupyter matplotlib Pillow scikit-learn protobuf termcolor grpcio \
     && pip3 install mock gast backports.weakref astor absl-py futures pytest pytest-xdist Keras-Applications==1.0.8 Keras-Preprocessing==1.1.0 wheel

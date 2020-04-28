@@ -26,6 +26,7 @@ RUN alternatives --set python /usr/bin/python3 \
     && wget -c https://github.com/bazelbuild/bazel/releases/download/0.24.1/bazel-0.24.1-installer-linux-x86_64.sh \
     && chmod a+x bazel-0.24.1-installer-linux-x86_64.sh \
     && ./bazel-0.24.1-installer-linux-x86_64.sh --user \
+    && rm -rf ./bazel-0.24.1-installer-linux-x86_64.sh \
     && python -m pip install --upgrade pip \
     && python -m pip install scipy jupyter matplotlib Pillow scikit-learn protobuf termcolor grpcio \
     && python -m pip install mock gast backports.weakref astor absl-py futures pytest pytest-xdist Keras-Applications==1.0.8 Keras-Preprocessing==1.1.0 wheel

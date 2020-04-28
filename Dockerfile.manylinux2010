@@ -20,6 +20,7 @@ RUN yum install -y centos-release-scl unzip vim wget cmake3 doxygen ccache sudo 
     && wget -q https://packagecloud.io/install/repositories/github/git-lfs/script.rpm.sh \
     && chmod a+x script.rpm.sh \
     && ./script.rpm.sh \
+    && rm -fr script.rpm.sh \
     && yum install -y git-lfs
 
 RUN source scl_source enable devtoolset-7 rh-python36 \
@@ -39,4 +40,4 @@ RUN echo "unset BASH_ENV PROMPT_COMMAND ENV" > /usr/bin/scl_enable \
 RUN chmod a+x /usr/bin/scl_enable
 
 # Switch to the user 
-USER 1001"
+USER 1001
