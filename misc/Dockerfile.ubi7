@@ -18,7 +18,7 @@ RUN yum-config-manager --enable rhel-server-rhscl-7-rpms \
 RUN wget -q https://github.com/Kitware/CMake/releases/download/v3.16.5/cmake-3.16.5.zip \
     && unzip cmake-3.16.5.zip \
     && cd cmake-3.16.5 \
-    && ./bootstrap --prefix=/usr/local
+    && ./bootstrap --prefix=/usr/local \
     && make \
     && make install
 
