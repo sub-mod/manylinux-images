@@ -36,6 +36,7 @@ RUN alternatives --set python /usr/bin/python3 \
 # /usr/local/lib/python3.6/site-packages user added in Dockerfile
 # /usr/local/bin/pip added by python -m pip install --upgrade pip
 RUN echo "unset BASH_ENV PROMPT_COMMAND ENV" > /usr/bin/scl_enable \
+    && echo "echo 'using user scl_enable script'" >> /usr/bin/scl_enable \
     && echo "alternatives --set python /usr/bin/python3" >> /usr/bin/scl_enable \
     && echo "JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk-1.8.0*'" >> /usr/bin/scl_enable \
     && echo "FULL_JAVA_HOME=$(readlink -f $JAVA_HOME)" >> /usr/bin/scl_enable \
