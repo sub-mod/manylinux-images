@@ -1,5 +1,4 @@
-FROM registry.access.redhat.com/ubi7/s2i-core
-
+FROM quay.io/sub_mod/centos7-s2i-core:latest
 LABEL maintainer="Subin Modeel <smodeel@redhat.com>"
 USER root
 

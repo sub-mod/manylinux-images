@@ -1,0 +1,24 @@
+FROM registry.access.redhat.com/ubi7/python-36
+#FROM registry.access.redhat.com/ubi7/ubi:latest
+
+LABEL maintainer="Subin Modeel <smodeel@redhat.com>"
+USER root
+
+ENV PLATFORM="el7" \
+    PATH=/root/bin:$PATH
+
+RUN yum-config-manager --enable rhel-server-rhscl-7-rpms rhel-7-server-devtools-rpms \
+    && yum install -y unzip vim wget git tar sudo \
+    && yum install -y devtoolset-7
+
+USER 1001
+
+# files for runtime images should be at /runtime 
+# make sure they are not in /workspace/source
+ADD ./tensorflow*.whl /opt/app-root/src
+COPY ./install /opt/app-root/src/
+
+RUN ls -l /opt/app-root/src/
+
+# Set the default CMD to print the usage of the language image.
+CMD $STI_SCRIPTS_PATH/usage
