@@ -9,7 +9,7 @@ ENV JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0*" \
     PATH=/root/bin:$PATH
 
 RUN yum-config-manager --enable rhel-server-rhscl-7-rpms rhel-7-server-devtools-rpms \
-    && yum install -y unzip vim wget git git-lfs sudo \
+    && yum install -y unzip vim wget git git-lfs sudo tree \
     && yum install -y devtoolset-7 
 
 # start the container with gcc-7 and py3.6
