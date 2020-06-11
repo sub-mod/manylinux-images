@@ -1,9 +1,9 @@
-FROM registry.access.redhat.com/ubi7/python-36
+FROM registry.access.redhat.com/ubi8/python-36
 
 LABEL maintainer="Subin Modeel <smodeel@redhat.com>"
 USER root
 
-ENV PLATFORM="el7" \
+ENV PLATFORM="el8" \
     PATH=/root/bin/:/opt/app-root/bin:/opt/app-root/src/.local/bin/:/opt/app-root/src/bin:/opt/app-root/bin:$PATH
 
 RUN yum-config-manager --enable rhel-server-rhscl-7-rpms rhel-7-server-devtools-rpms \
@@ -14,7 +14,7 @@ RUN yum-config-manager --enable rhel-server-rhscl-7-rpms rhel-7-server-devtools-
 # files for runtime images should be at /myworkspace-pvc 
 # make sure they are not in /workspace/source
 ADD ./tensorflow*.whl /opt/app-root/src
-COPY ./install /opt/app-root/lib/senlib
+COPY ./install /opt/app-root/src/
 
 RUN source scl_source enable devtoolset-7 rh-python36 \
     && gcc --version \
@@ -39,6 +39,6 @@ RUN sed -i 's/rh-python36/rh-python36 devtoolset-7/g' /opt/app-root/etc/scl_enab
     fix-permissions ${APP_ROOT} -P
 
 USER 1001
-RUN ls -l /opt/app-root/src/ && ls -l /opt/app-root/lib/senlib
+RUN ls -l /opt/app-root/src/
 # Set the default CMD to print the usage of the language image.
 CMD $STI_SCRIPTS_PATH/usage

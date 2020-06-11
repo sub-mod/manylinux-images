@@ -1,25 +1,45 @@
-FROM quay.io/sub_mod/centos7-s2i-core:latest
+#FROM quay.io/sub_mod/centos7-s2i-core:latest
+FROM centos/python-36-centos7
 
 LABEL maintainer="Subin Modeel <smodeel@redhat.com>"
 USER root
 
 ENV PLATFORM="el7" \
-    PATH=/root/bin:$PATH
+    PATH=/root/bin/:/opt/app-root/bin:/opt/app-root/src/.local/bin/:/opt/app-root/src/bin:/opt/app-root/bin:$PATH
 
 RUN yum -y install centos-release-scl \
     && yum -y install devtoolset-7 rh-python36 \
-    && yum install -y unzip vim wget git tar sudo tree
+    && yum install -y unzip vim wget git tar sudo tree \
+    && ls -l /opt/app-root/src/
 
-
-
-# files for runtime images should be at /runtime 
+# files for runtime images should be at /myworkspace-pvc 
 # make sure they are not in /workspace/source
 ADD ./tensorflow*.whl /opt/app-root/src
 COPY ./install /opt/app-root/src/
 
-RUN chown -R 1001:0 ${APP_ROOT}
+RUN source scl_source enable devtoolset-7 rh-python36 \
+    && gcc --version \
+    && python -V \
+    && virtualenv ${APP_ROOT} \
+    && . ${APP_ROOT}/bin/activate \
+    && which python3 \
+    && which pip3 \
+    && pip3 install --upgrade pip \
+    && pip3 install absl-py \
+    && pip3 install ${APP_ROOT}/src/tensorflow*.whl \
+    && pip3 install tensorflow-estimator==1.15.0
+
+ENV SENCORES=1 \
+    SENCORELETS=2 \
+    SENLIB_PATH=${APP_ROOT}/lib/senlib \
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${SENLIB_PATH}/lib \
+    PATH=$PATH:${SENLIB_PATH}/bin
+
+RUN sed -i 's/rh-python36/rh-python36 devtoolset-7/g' /opt/app-root/etc/scl_enable && \
+    chown -R 1001:0 ${APP_ROOT} && \
+    fix-permissions ${APP_ROOT} -P
 
 USER 1001
-RUN ls -l /opt/app-root/src/
+RUN ls -l /opt/app-root/src/ && ls -l /opt/app-root/lib/senlib
 # Set the default CMD to print the usage of the language image.
 CMD $STI_SCRIPTS_PATH/usage
